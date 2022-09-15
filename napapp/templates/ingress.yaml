@@ -1,0 +1,23 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "napapp.fullname" }}
+  labels:
+    {{- include "napapp.labels" . | nindent 4 }}
+    app.kubernetes.io/component: server
+  annotations:
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+spec:
+  rules:
+    - host: {{ .Values.ingress.hostsName }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "napapp.fullname" }}
+                port:
+                  number: {{ .Values.service.port }}
+{{- end }}
